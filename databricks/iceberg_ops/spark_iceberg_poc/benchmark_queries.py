@@ -8,7 +8,7 @@ import os
 import time
 from typing import Dict, List, Optional, Tuple
 
-# Add databricks-utils to path
+# Add databricks-utils to path (relative to current repo structure)
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'databricks-utils'))
 from cluster_execution import get_e2_demo_client, execute_query_on_cluster
 

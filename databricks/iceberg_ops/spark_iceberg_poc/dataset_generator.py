@@ -14,7 +14,7 @@ from datetime import datetime, timedelta, date
 from typing import Optional, Dict, List, Any, Union
 from decimal import Decimal
 
-# Add databricks-utils to path
+# Add databricks-utils to path (relative to current repo structure)
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'databricks-utils'))
 from cluster_execution import get_e2_demo_client, execute_query_on_cluster
 
