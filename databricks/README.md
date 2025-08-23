@@ -6,7 +6,7 @@ This repository contains general-purpose utilities and tools for working with Da
 
 - `databricks-utils/` - General Databricks utilities and helper functions
 - `iceberg_ops/` - Apache Iceberg operations, testing, and benchmarking tools
-- `databricks-app/` - Claude Usage Calculator Databricks App
+- `databricks-app/` - FMAPI Pricing Calculator Databricks App
 
 ## Configuration
 
