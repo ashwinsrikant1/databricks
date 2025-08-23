@@ -1,0 +1,97 @@
+# Sensitive files and directories
+.env
+.env.*
+!.env.template
+!.env.example
+credentials.json
+secrets.yaml
+secrets.yml
+*.pem
+*.key
+*_key
+*_secret
+token
+tokens/
+auth/
+
+# API keys and tokens (various formats)
+*api_key*
+*apikey*
+*access_token*
+*secret_key*
+dapi*
+sk-*
+
+# Customer-specific data
+customer_data/
+client_data/
+*_customer_*
+*_client_*
+
+# Databricks specific
+.databricks/
+*.databricks
+databricks_config.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+vendor/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Logs
+*.log
+logs/
