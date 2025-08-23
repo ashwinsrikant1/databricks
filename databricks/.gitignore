@@ -1,6 +1,7 @@
 # Sensitive files and directories
 .env
 .env.*
+.env.local
 !.env.template
 !.env.example
 credentials.json

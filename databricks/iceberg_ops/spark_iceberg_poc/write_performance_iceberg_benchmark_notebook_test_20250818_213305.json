@@ -1,0 +1,31 @@
+{
+  "table_name": "users.ashwin_srikant.iceberg_benchmark_notebook_test",
+  "num_rows": 10000,
+  "text_length_bytes": 1024,
+  "batch_size": 10000,
+  "total_data_size_mb": 9.765625,
+  "batch_metrics": [
+    {
+      "batch_number": 1,
+      "rows_in_batch": 10000,
+      "text_generation_time": 0.012188911437988281,
+      "insert_time": 9.484086751937866,
+      "total_batch_time": 9.496275663375854,
+      "batch_data_mb": 9.765625,
+      "rows_per_second": 1053.0444096696615,
+      "mb_per_second": 1.0283636813180288
+    }
+  ],
+  "text_generation_time_seconds": 0.012188911437988281,
+  "table_creation_time_seconds": 7.2158284187316895,
+  "total_insert_time_seconds": 9.512749195098877,
+  "total_time_seconds": 16.728615045547485,
+  "table_stats": {
+    "raw_output": "Results(cause=None, data=[[10000, 0.009, 1007.0, 1007, 1007]], file_name=None, file_names=None, is_json_schema=True, pos=None, result_type=<ResultType.TABLE: 'table'>, schema=[{'name': 'row_count', 'type': '\"long\"', 'metadata': '{}'}, {'name': 'text_size_gb', 'type': '\"double\"', 'metadata': '{}'}, {'name': 'avg_text_length', 'type': '\"double\"', 'metadata': '{}'}, {'name': 'min_text_length', 'type': '\"integer\"', 'metadata': '{}'}, {'name': 'max_text_length', 'type': '\"integer\"', 'metadata': '{}'}], summary=None, truncated=False)",
+    "status": "success"
+  },
+  "overall_rows_per_second": 597.7781168837175,
+  "overall_mb_per_second": 0.5837676922692554,
+  "insert_rows_per_second": 1051.2208190196125,
+  "insert_mb_per_second": 1.0265828310738403
+}
