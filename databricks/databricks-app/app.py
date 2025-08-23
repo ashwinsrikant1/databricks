@@ -6,7 +6,7 @@ from datetime import datetime
 
 # Configure Streamlit page
 st.set_page_config(
-    page_title="Claude Usage Calculator",
+    page_title="FMAPI Pricing Calculator",
     page_icon="💰",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -17,7 +17,7 @@ import os
 if 'DATABRICKS_RUNTIME_VERSION' in os.environ:
     st.write("🏢 Running on Databricks Apps")
 
-class ClaudeBedrockPricing:
+class FMAPIPricing:
     def __init__(self):
         # Pricing per 1K tokens (as of January 2025)
         # Source: https://aws.amazon.com/bedrock/pricing/
@@ -147,11 +147,11 @@ class ClaudeBedrockPricing:
 
 def main():
     # Header
-    st.title("💰 Claude Usage Calculator")
-    st.markdown("### Estimate costs for Claude models on Bedrock based on TPM and usage patterns")
+    st.title("💰 FMAPI Pricing Calculator")
+    st.markdown("### Estimate costs for Foundation Model APIs based on TPM and usage patterns")
     
     # Initialize calculator
-    calculator = ClaudeBedrockPricing()
+    calculator = FMAPIPricing()
     
     # Sidebar for inputs
     st.sidebar.header("📊 Configuration")
@@ -161,7 +161,7 @@ def main():
         "Model",
         options=list(calculator.pricing.keys()),
         index=0,
-        help="Select the Claude model you want to analyze"
+        help="Select the model you want to analyze"
     )
     
     # Cloud provider
@@ -202,25 +202,27 @@ def main():
         help="Average number of output tokens per API request"
     )
     
-    # Caching configuration
-    st.sidebar.subheader("Cost Optimization")
-    caching_ratio_percent = st.sidebar.slider(
-        "Cache Hit Ratio (%)",
-        min_value=0.0,
-        max_value=100.0,
-        value=80.0,
-        step=5.0,
-        help="Percentage of input tokens that benefit from caching"
-    )
-    
-    discount_percent = st.sidebar.slider(
-        "Volume Discount (%)",
-        min_value=0.0,
-        max_value=50.0,
-        value=0.0,
-        step=1.0,
-        help="Negotiated discount percentage on total bill"
-    )
+    # Advanced settings in an expander (collapsed by default)
+    with st.sidebar.expander("🔧 Advanced Settings", expanded=False):
+        st.subheader("Prompt Caching")
+        caching_ratio_percent = st.slider(
+            "Cache Hit Ratio (%)",
+            min_value=0.0,
+            max_value=100.0,
+            value=0.0,
+            step=5.0,
+            help="Percentage of input tokens that benefit from caching"
+        )
+        
+        st.subheader("Cost Optimization")
+        discount_percent = st.slider(
+            "Volume Discount (%)",
+            min_value=0.0,
+            max_value=50.0,
+            value=0.0,
+            step=1.0,
+            help="Negotiated discount percentage on total bill"
+        )
     
     # Calculate costs
     try:

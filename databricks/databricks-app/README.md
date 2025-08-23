@@ -1,6 +1,6 @@
-# Claude Usage Calculator - Databricks App
+# FMAPI Pricing Calculator - Databricks App
 
-An interactive web application for estimating Claude model costs on AWS Bedrock, deployed as a Databricks App.
+An interactive web application for estimating Foundation Model API costs, deployed as a Databricks App.
 
 ## Features
 
@@ -40,13 +40,13 @@ An interactive web application for estimating Claude model costs on AWS Bedrock,
 3. **Access the app**:
    - Go to your Databricks workspace
    - Navigate to **Apps** in the sidebar
-   - Find and open "claude-usage-calculator"
+   - Find and open "fmapi-pricing-calculator"
 
 ## Usage
 
 ### Input Parameters
 
-- **Model**: Select Claude model (Sonnet 4, 3.7 Sonnet, Opus 4)
+- **Model**: Select model (Claude Sonnet 4, 3.7 Sonnet, Opus 4)
 - **Cloud Provider**: Choose AWS, GCP, or Azure
 - **TPM (Millions)**: Tokens processed per minute in millions
 - **Input/Output Tokens per Request**: Average token usage per API call
@@ -62,7 +62,7 @@ An interactive web application for estimating Claude model costs on AWS Bedrock,
 
 ## Original Notebook
 
-This app is based on the `Claude Usage Calculator.ipynb` notebook, converting Databricks widgets to an interactive web interface with enhanced visualizations.
+This app is based on the `Claude Usage Calculator.ipynb` notebook, converted to a more general Foundation Model API pricing calculator with an interactive web interface and enhanced visualizations.
 
 ## Architecture
 
