@@ -1,0 +1,20 @@
+bundle:
+  name: claude-usage-calculator
+
+resources:
+  apps:
+    claude_usage_calculator:
+      name: claude-usage-calculator
+      description: "Interactive Claude Usage and Cost Calculator for Bedrock pricing analysis"
+      source_code_path: /Workspace/Users/ashwin.srikant@databricks.com/claude-usage-calculator
+      
+targets:
+  dev:
+    # Development target configuration
+    workspace:
+      host: https://e2-demo-field-eng.cloud.databricks.com
+      
+  prod:
+    # Production target configuration  
+    workspace:
+      host: https://e2-demo-field-eng.cloud.databricks.com
