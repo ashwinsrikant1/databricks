@@ -95,4 +95,4 @@ Thumbs.db
 
 # Logs
 *.log
-logs/
+logs/__pycache__/

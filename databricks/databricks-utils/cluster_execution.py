@@ -34,7 +34,7 @@ def get_e2_demo_client():
             return WorkspaceClient()
         except Exception as e:
             print(f"Default auth failed, trying with explicit host: {e}")
-            return WorkspaceClient(host="https://e2-demo-field-eng.cloud.databricks.com")
+            return WorkspaceClient(host=DATABRICKS_HOST)
     else:
         # We're running locally - use PAT token
         print("Running locally - using PAT token authentication")
