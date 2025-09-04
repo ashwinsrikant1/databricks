@@ -1,0 +1,222 @@
+# =============================================================================
+# TERRAFORM VARIABLES EXAMPLE FILE
+# =============================================================================
+# Copy this file to terraform.tfvars and customize with your values
+# cp terraform.tfvars.example terraform.tfvars
+
+# =============================================================================
+# ORGANIZATION AND ENVIRONMENT
+# =============================================================================
+
+# Your organization name (used in resource naming)
+organization_name = "acme-corp"
+
+# Environment (dev, staging, prod)
+environment = "prod"
+
+# =============================================================================
+# AWS CONFIGURATION
+# =============================================================================
+
+# AWS region for deployment
+aws_region = "us-east-1"
+
+# Optional: Specific availability zones (leave empty to use all available)
+# availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+
+# =============================================================================
+# DATABRICKS ACCOUNT CONFIGURATION
+# =============================================================================
+
+# Your Databricks Account ID (found in Account Settings > Account ID)
+# Example: "12345678-1234-1234-1234-123456789abc"
+databricks_account_id = "YOUR_DATABRICKS_ACCOUNT_ID_HERE"
+
+# Optional: Custom workspace name (defaults to "{org}-{env}-workspace")
+# databricks_workspace_name = "acme-corp-prod-workspace"
+
+# =============================================================================
+# UNITY CATALOG CONFIGURATION
+# =============================================================================
+
+# Enable Unity Catalog features
+enable_unity_catalog = true
+
+# Unity Catalog metastore name (defaults to "{org}-{env}-metastore")
+# metastore_name = "acme-corp-prod-metastore"
+
+# Primary catalog name (defaults to "{org}_catalog")
+# Must start with lowercase letter, contain only lowercase, numbers, underscores
+catalog_name = "acme_corp_catalog"
+
+# Admin group for Unity Catalog
+unity_admin_group = "unity-catalog-admins"
+
+# =============================================================================
+# STORAGE CONFIGURATION
+# =============================================================================
+
+# Root storage bucket for Unity Catalog (must be globally unique)
+# Will have random suffix appended automatically
+root_storage_bucket_name = "acme-corp-databricks-root-storage"
+
+# Optional: External data bucket
+external_data_bucket_name = "acme-corp-databricks-external-data"
+
+# Additional external locations (optional)
+additional_external_locations = {
+  "raw_data" = {
+    url     = "s3://acme-corp-raw-data/"
+    comment = "Raw data storage location"
+  }
+  "processed_data" = {
+    url       = "s3://acme-corp-processed-data/"
+    comment   = "Processed data storage location"
+    read_only = false
+  }
+  "analytics_data" = {
+    url         = "s3://acme-corp-analytics-data/"
+    comment     = "Analytics data storage location"
+    read_only   = true
+    skip_validation = false
+  }
+}
+
+# =============================================================================
+# NETWORKING CONFIGURATION (Optional)
+# =============================================================================
+
+# Optional: Use specific VPC (leave null to use default VPC)
+# vpc_id = "vpc-1234567890abcdef0"
+
+# Optional: Use specific subnets
+# subnet_ids = ["subnet-1234567890abcdef0", "subnet-0fedcba0987654321"]
+
+# Optional: Additional security groups
+# security_group_ids = ["sg-1234567890abcdef0"]
+
+# Enable private subnets for enhanced security
+enable_private_subnets = false
+
+# =============================================================================
+# WORKSPACE USERS AND PERMISSIONS
+# =============================================================================
+
+# List of users to add to the workspace
+workspace_users = [
+  "alice@acme-corp.com",
+  "bob@acme-corp.com",
+  "charlie@acme-corp.com"
+]
+
+# List of workspace administrators
+workspace_admins = [
+  "admin@acme-corp.com",
+  "data-platform-lead@acme-corp.com"
+]
+
+# Enable workspace-level access control
+enable_workspace_access_control = true
+
+# =============================================================================
+# CLUSTER CONFIGURATION
+# =============================================================================
+
+# Create a default cluster for testing
+create_default_cluster = true
+
+# Default cluster configuration
+default_cluster_config = {
+  spark_version           = "13.3.x-scala2.12"
+  node_type_id           = "i3.xlarge"
+  driver_node_type_id    = "i3.xlarge"
+  num_workers            = 2
+  autotermination_minutes = 30
+  data_security_mode     = "USER_ISOLATION"
+}
+
+# =============================================================================
+# SECURITY AND COMPLIANCE
+# =============================================================================
+
+# Enable encryption at rest for S3 buckets
+enable_encryption_at_rest = true
+
+# Optional: Use specific KMS key for encryption (leave null for AWS managed)
+# kms_key_id = "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+
+# Enable CloudTrail logging for audit
+enable_cloudtrail_logging = true
+
+# Optional: Restrict access to specific IP ranges
+# allowed_ip_ranges = ["203.0.113.0/24", "198.51.100.0/24"]
+
+# =============================================================================
+# RESOURCE TAGGING
+# =============================================================================
+
+# Cost center for billing
+cost_center = "data-platform"
+
+# Owner email for resource management
+owner_email = "data-platform-team@acme-corp.com"
+
+# Additional tags for all resources
+additional_tags = {
+  "Department"    = "Engineering"
+  "Project"       = "Data Platform"
+  "BusinessUnit"  = "Technology"
+  "Compliance"    = "SOX"
+}
+
+# =============================================================================
+# FEATURE FLAGS
+# =============================================================================
+
+# Enable CloudWatch monitoring
+enable_monitoring = true
+
+# Enable automatic backup for S3 buckets
+enable_backup = true
+
+# Enable versioning for S3 buckets
+enable_versioning = true
+
+# Backup retention period (days)
+backup_retention_days = 30
+
+# =============================================================================
+# EXAMPLE CONFIGURATIONS FOR DIFFERENT ENVIRONMENTS
+# =============================================================================
+
+# Development Environment Example:
+# organization_name = "acme-corp"
+# environment = "dev"
+# databricks_account_id = "YOUR_ACCOUNT_ID"
+# catalog_name = "acme_corp_dev_catalog"
+# root_storage_bucket_name = "acme-corp-dev-databricks-root"
+# create_default_cluster = true
+# enable_encryption_at_rest = false
+# backup_retention_days = 7
+
+# Staging Environment Example:
+# organization_name = "acme-corp"
+# environment = "staging"
+# databricks_account_id = "YOUR_ACCOUNT_ID"
+# catalog_name = "acme_corp_staging_catalog"
+# root_storage_bucket_name = "acme-corp-staging-databricks-root"
+# create_default_cluster = false
+# enable_encryption_at_rest = true
+# backup_retention_days = 14
+
+# Production Environment Example:
+# organization_name = "acme-corp"
+# environment = "prod"
+# databricks_account_id = "YOUR_ACCOUNT_ID"
+# catalog_name = "acme_corp_catalog"
+# root_storage_bucket_name = "acme-corp-prod-databricks-root"
+# create_default_cluster = false
+# enable_encryption_at_rest = true
+# enable_monitoring = true
+# backup_retention_days = 30
+# allowed_ip_ranges = ["10.0.0.0/8"]
