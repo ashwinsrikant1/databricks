@@ -11,6 +11,9 @@ databricks-langchain
 langgraph
 langchain-core
 
+# Deployment and serving
+databricks
+
 # Utilities
 pydantic
 nest_asyncio
