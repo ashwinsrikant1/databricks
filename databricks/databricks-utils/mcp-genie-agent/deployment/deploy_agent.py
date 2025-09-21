@@ -261,8 +261,8 @@ def print_usage_instructions():
         print(f"   • {query}")
 
     print(f"\n🔗 Useful Links:")
-    print(f"   • Databricks Playground: https://{deployment_config.workspace_hostname}/ml/playground")
-    print(f"   • Model Registry: https://{deployment_config.workspace_hostname}/explore/data/{deployment_config.catalog_name}/{deployment_config.schema_name}")
+    print(f"   • Databricks Playground: https://{config.workspace_hostname}/ml/playground")
+    print(f"   • Model Registry: https://{config.workspace_hostname}/explore/data/{deployment_config.catalog_name}/{deployment_config.schema_name}")
 
     print("\n✨ Your MCP Genie Agent is ready to help analyze your Databricks data!")
 

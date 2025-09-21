@@ -18,17 +18,27 @@ class MCPAgentWrapper(PythonModel):
 
     def load_context(self, context):
         """Load the agent using the model configuration."""
-        # Add the code paths to sys.path
         import sys
+        import os
         from pathlib import Path
 
-        # Get the directory where this model is loaded
-        model_dir = Path(context.artifacts["code"])
-        if str(model_dir) not in sys.path:
-            sys.path.insert(0, str(model_dir))
+        # MLflow copies code_paths directly to the model directory
+        # Add current directory (where model files are) to Python path
+        current_dir = Path(__file__).parent.absolute()
+        if str(current_dir) not in sys.path:
+            sys.path.insert(0, str(current_dir))
 
-        # Now import the agent
-        from src.agent import SingleTurnMCPAgent
+        # Try to import the agent from the src directory
+        try:
+            from src.agent import SingleTurnMCPAgent
+        except ImportError as e:
+            # Debug: print available files to understand the structure
+            print(f"Import error: {e}")
+            print(f"Current directory: {current_dir}")
+            print(f"Files in current directory: {list(current_dir.glob('*'))}")
+            if (current_dir / "src").exists():
+                print(f"Files in src: {list((current_dir / 'src').glob('*'))}")
+            raise
 
         # Get configuration from the model context
         config = context.model_config
