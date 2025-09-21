@@ -49,13 +49,18 @@ class MCPGenieConfig:
             "databricks-claude-sonnet-4"
         )
 
-        # MCP Server URL
+        # MCP Server URLs
         self.genie_server_url: str = f"https://{self.workspace_hostname}/api/2.0/mcp/genie/{self.genie_space_id}"
+
+        # Unity Catalog Configuration
+        self.unity_catalog_catalog: str = os.getenv("UNITY_CATALOG_CATALOG", "users")
+        self.unity_catalog_schema: str = os.getenv("UNITY_CATALOG_SCHEMA", "ashwin_srikant")
+        self.unity_catalog_server_url: str = f"https://{self.workspace_hostname}/api/2.0/mcp/functions/{self.unity_catalog_catalog}/{self.unity_catalog_schema}"
 
         # Agent Configuration
         self.system_prompt: str = (
             "You are a helpful assistant that can query structured data through "
-            "Genie spaces and provide insights based on the results."
+            "Genie spaces and execute Unity Catalog functions to provide insights based on the results."
         )
 
     def validate_config(self) -> tuple[bool, list[str]]:
@@ -127,8 +132,10 @@ class MCPGenieConfig:
         print("=" * 50)
         print(f"Workspace Host: {self.databricks_host}")
         print(f"Genie Space ID: {self.genie_space_id}")
+        print(f"Unity Catalog: {self.unity_catalog_catalog}.{self.unity_catalog_schema}")
         print(f"LLM Endpoint: {self.llm_endpoint_name}")
-        print(f"MCP Server URL: {self.genie_server_url}")
+        print(f"Genie MCP Server URL: {self.genie_server_url}")
+        print(f"Unity Catalog MCP Server URL: {self.unity_catalog_server_url}")
 
         if mask_secrets:
             client_id_masked = f"{self.client_id[:8]}..." if self.client_id else "Not set"

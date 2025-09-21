@@ -103,6 +103,81 @@ class GenieServerClient(MCPServerClient):
             return []
 
 
+class UnityCatalogMCPClient(MCPServerClient):
+    """
+    Client for Databricks Unity Catalog MCP server.
+
+    Provides access to Unity Catalog functions as MCP tools.
+    """
+
+    def __init__(self, catalog: str, schema: str, workspace_client: Optional[WorkspaceClient] = None):
+        # Construct Unity Catalog MCP server URL
+        if workspace_client:
+            workspace_host = workspace_client.config.host
+        else:
+            from databricks.sdk import WorkspaceClient
+            workspace_client = WorkspaceClient()
+            workspace_host = workspace_client.config.host
+
+        server_url = f"{workspace_host}/api/2.0/mcp/functions/{catalog}/{schema}"
+        super().__init__(server_url)
+
+        self.catalog = catalog
+        self.schema = schema
+        self.workspace_client = workspace_client
+
+    async def connect(self) -> bool:
+        """Connect to the Unity Catalog MCP server."""
+        try:
+            self.client = DatabricksMCPClient(
+                server_url=self.server_url,
+                workspace_client=self.workspace_client
+            )
+            print(f"✅ Connected to Unity Catalog MCP server: {self.catalog}.{self.schema}")
+            return True
+        except Exception as e:
+            print(f"Failed to connect to Unity Catalog MCP server {self.catalog}.{self.schema}: {e}")
+            return False
+
+    async def get_tools(self) -> List[Any]:
+        """Get available Unity Catalog functions as tools."""
+        if not self.client:
+            await self.connect()
+
+        try:
+            # Use private async method to avoid event loop conflicts
+            tools = await self.client._get_tools_async()
+            print(f"Found {len(tools)} Unity Catalog functions in {self.catalog}.{self.schema}")
+            for tool in tools:
+                print(f"  - {tool.name}: {tool.description[:100]}...")
+            return tools
+        except Exception as e:
+            print(f"Error getting Unity Catalog functions from {self.catalog}.{self.schema}: {e}")
+            return []
+
+    async def call_tool(self, tool_name: str, parameters: Dict[str, Any]) -> Any:
+        """Call a Unity Catalog function."""
+        if not self.client:
+            await self.connect()
+
+        try:
+            # Use private async method for Jupyter compatibility
+            result = await self.client._call_tools_async(tool_name, parameters)
+            print(f"Called Unity Catalog function {tool_name} with result type: {type(result)}")
+            return result
+        except Exception as e:
+            print(f"Error calling Unity Catalog function {tool_name}: {e}")
+            return f"Error: {e}"
+
+    def get_resources(self) -> List[Dict[str, Any]]:
+        """Get resources needed for deployment."""
+        try:
+            return self.client.get_databricks_resources() if self.client else []
+        except Exception as e:
+            print(f"Error getting Unity Catalog resources: {e}")
+            return []
+
+
 class CustomMCPClient(MCPServerClient):
     """
     Client for custom MCP servers.

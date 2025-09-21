@@ -196,7 +196,7 @@ class SingleTurnMCPAgent(ResponsesAgent):
 
     async def _initialize_async(self):
         """Async initialization logic."""
-        from .mcp_client import GenieServerClient, CustomMCPClient
+        from .mcp_client import GenieServerClient, UnityCatalogMCPClient, CustomMCPClient
         from databricks.sdk import WorkspaceClient
 
         print("🔄 Initializing SingleTurnMCPAgent...")
@@ -208,12 +208,17 @@ class SingleTurnMCPAgent(ResponsesAgent):
         # Add servers based on configuration
         for config in self.server_configs:
             server_type = config.get('type', 'genie')
-            server_url = config['url']
             server_name = config.get('name', f"{server_type}_server")
 
             if server_type == 'genie':
+                server_url = config['url']
                 server_client = GenieServerClient(server_url, workspace_client)
+            elif server_type == 'unity_catalog':
+                catalog = config.get('catalog', 'users')
+                schema = config.get('schema', 'ashwin_srikant')
+                server_client = UnityCatalogMCPClient(catalog, schema, workspace_client)
             elif server_type == 'custom':
+                server_url = config['url']
                 auth_config = config.get('auth', {})
                 server_client = CustomMCPClient(server_url, auth_config)
             else:
