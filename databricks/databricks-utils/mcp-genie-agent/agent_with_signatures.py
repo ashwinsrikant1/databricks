@@ -69,8 +69,20 @@ def predict(requests: list[ChatCompletionRequest]) -> list[ChatCompletionRespons
 
     for request in requests:
         try:
-            # Extract messages from request
-            messages = request.messages
+            # Debug: Print what we're actually receiving
+            print(f"DEBUG: Received request type: {type(request)}")
+            print(f"DEBUG: Request content: {request}")
+
+            # Handle different input formats
+            if isinstance(request, str):
+                # If we get a string, treat it as the user message
+                messages = [ChatMessage(role="user", content=request)]
+            elif hasattr(request, 'messages'):
+                # Extract messages from request
+                messages = request.messages
+            else:
+                # Try to convert to messages
+                messages = [ChatMessage(role="user", content=str(request))]
 
             # Get the latest user message
             user_message = ""
