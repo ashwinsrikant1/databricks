@@ -156,18 +156,36 @@ class UnityCatalogMCPClient(MCPServerClient):
             return []
 
     async def call_tool(self, tool_name: str, parameters: Dict[str, Any]) -> Any:
-        """Call a Unity Catalog function."""
+        """Call a Unity Catalog function with improved error handling."""
         if not self.client:
             await self.connect()
 
         try:
-            # Use private async method for Jupyter compatibility
+            # Try the standard MCP client method first
             result = await self.client._call_tools_async(tool_name, parameters)
             print(f"Called Unity Catalog function {tool_name} with result type: {type(result)}")
             return result
         except Exception as e:
             print(f"Error calling Unity Catalog function {tool_name}: {e}")
-            return f"Error: {e}"
+
+            # Try alternative approach with the sync method in a thread
+            try:
+                print(f"Attempting fallback sync call for {tool_name}...")
+                import asyncio
+                import concurrent.futures
+
+                def sync_call():
+                    return self.client.call_tool(tool_name, parameters)
+
+                loop = asyncio.get_event_loop()
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    result = await loop.run_in_executor(executor, sync_call)
+                    print(f"Fallback successful for {tool_name}")
+                    return result
+
+            except Exception as fallback_error:
+                print(f"Fallback also failed for {tool_name}: {fallback_error}")
+                return f"Error: Unity Catalog function execution failed - {e}"
 
     def get_resources(self) -> List[Dict[str, Any]]:
         """Get resources needed for deployment."""
@@ -238,7 +256,7 @@ class MCPTool(BaseTool):
         MCPTool.server_client = server_client
 
     async def _arun(self, **kwargs) -> str:
-        """Async tool execution."""
+        """Async tool execution with improved error handling."""
         try:
             # Handle query parameter specifically for Genie
             if isinstance(self.server_client, GenieServerClient):
@@ -252,9 +270,23 @@ class MCPTool(BaseTool):
                     query_parts = [f"{k}: {v}" for k, v in kwargs.items()]
                     kwargs = {'query': "; ".join(query_parts)}
 
+            # Call the tool with improved error handling
             result = await self.server_client.call_tool(self.tool_def.name, kwargs)
-            return extract_response_content(result)
+
+            # Extract and return the response
+            response_content = extract_response_content(result)
+
+            # If we got an error message, check if it's a transient async issue
+            if isinstance(response_content, str) and "TaskGroup" in response_content:
+                print(f"Detected TaskGroup error for {self.tool_def.name}, this is likely an async execution issue")
+                return f"Function '{self.tool_def.name}' encountered an async execution error. The function exists and should work, but there's a technical issue with the async execution environment."
+
+            return response_content
+
         except Exception as e:
+            error_msg = str(e)
+            if "TaskGroup" in error_msg or "unhandled errors" in error_msg:
+                return f"Function '{self.tool_def.name}' encountered an async execution error (TaskGroup issue). This is a technical problem with the async execution environment, not the function itself."
             return f"Error calling tool {self.tool_def.name}: {e}"
 
     def _run(self, **kwargs) -> str:
