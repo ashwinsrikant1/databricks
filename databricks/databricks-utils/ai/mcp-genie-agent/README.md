@@ -1,15 +1,15 @@
-# MCP Genie Agent with Databricks Claude Sonnet 4
+# MCP Genie Agent with Claude Sonnet 4
 
-A powerful tool-calling agent that uses Databricks' **Claude Sonnet 4** endpoint with the MCP (Model Context Protocol) Genie server to query structured data tables through natural language.
+A streamlined tool-calling agent using Databricks' **Claude Sonnet 4** endpoint with MCP (Model Context Protocol) integration for both Genie natural language queries and direct SQL execution.
 
 ## 🚀 Features
 
 - **OAuth Authentication** - Secure service principal authentication
 - **Claude Sonnet 4 Integration** - Powered by Databricks' most advanced LLM endpoint
-- **MCP Integration** - Connect to Databricks Genie spaces
-- **LangGraph Workflow** - Sophisticated agent orchestration
-- **MLflow Compatible** - Ready for production deployment
-- **Interactive Testing** - Multiple ways to test and interact with the agent
+- **Genie MCP Integration** - Natural language queries on system tables
+- **Direct SQL Execution** - Execute SQL queries with OAuth authentication
+- **Simple & Focused** - Just 3 core tools: Genie queries, SQL execution, cluster listing
+- **Production Ready** - MLflow compatible for Databricks Playground deployment
 
 ## 📁 Project Structure
 
@@ -18,10 +18,13 @@ mcp-genie-agent/
 ├── README.md                    # This file
 ├── mcp_genie_agent.ipynb       # Main Jupyter notebook
 ├── config.py                   # Configuration management
-├── .env                       # Environment variables (edit with your values)
 ├── .env.example               # Environment variables template
 ├── requirements.txt           # Python dependencies
-└── .gitignore                 # Git ignore rules
+├── .gitignore                 # Git ignore rules
+└── src/                       # Core implementation
+    ├── agent.py               # MCP agent classes
+    ├── mcp_client.py          # MCP server clients
+    └── utils.py               # Utility functions
 ```
 
 ## 🔧 Setup
