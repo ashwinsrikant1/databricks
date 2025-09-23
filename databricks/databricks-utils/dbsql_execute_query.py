@@ -2,39 +2,86 @@
 
 import os
 import time
+from pathlib import Path
 from databricks.sdk import WorkspaceClient
+
+# =============================================================================
+# CONFIGURATION - Modify these values as needed
+# =============================================================================
+
+# Databricks workspace configuration
+DATABRICKS_HOST = "https://your-workspace.cloud.databricks.com"
+DATABRICKS_TOKEN = "your-databricks-token"
 
 # User can modify this query as needed
 USER_QUERY = """
-select * from main.gtm_gold.use_case_conversion where usecase_id = 'aAvVp000000x95hKAA'
+select * from system.query.history limit 10
 """
 
 # User can specify SQL Warehouse ID (leave None to auto-select first available)
-SQL_WAREHOUSE_ID = "071969b1ec9a91ca"
+SQL_WAREHOUSE_ID = None
 
-# Databricks configuration
-DATABRICKS_LOGFOOD_TOKEN = os.getenv('DATABRICKS_LOGFOOD_TOKEN')
-DATABRICKS_HOST = "https://adb-2548836972759138.18.azuredatabricks.net"
+# =============================================================================
+# IMPLEMENTATION - Generally no need to modify below this line
+# =============================================================================
 
-def get_logfood_client():
-    """Initialize Databricks client with LOGFOOD PAT"""
-    # Set environment variables from constants
-    os.environ['DATABRICKS_TOKEN'] = DATABRICKS_LOGFOOD_TOKEN
-    os.environ['DATABRICKS_HOST'] = DATABRICKS_HOST
-    
-    print(f"Connecting to Databricks at: {DATABRICKS_HOST}")
-    
-    return WorkspaceClient()
+def load_env_local():
+    """Load environment variables from .env.local if it exists"""
+    env_file = Path(__file__).parent / '.env.local'
+    if env_file.exists():
+        with open(env_file) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key.strip()] = value.strip()
+
+def get_databricks_client():
+    """Initialize Databricks client - works both locally and in Databricks notebooks"""
+
+    # Load any local env file first
+    load_env_local()
+
+    # Check if we're in a Databricks environment by looking for specific env vars
+    if 'DATABRICKS_RUNTIME_VERSION' in os.environ or 'DB_HOME' in os.environ:
+        print("Running in Databricks environment - using default authentication")
+        try:
+            # In Databricks notebooks, use default auth
+            return WorkspaceClient()
+        except Exception as e:
+            print(f"Default auth failed, trying with explicit host: {e}")
+            return WorkspaceClient(host=DATABRICKS_HOST)
+    else:
+        # We're running locally - use PAT token
+        print("Running locally - using PAT token authentication")
+
+        # Use configured token or try environment variable
+        token = DATABRICKS_TOKEN or os.getenv('DATABRICKS_TOKEN') or os.getenv('E2_DEMO_FIELD_ENG_PAT')
+        host = DATABRICKS_HOST or os.getenv('DATABRICKS_HOST')
+
+        # Check if token is available
+        if not token:
+            raise ValueError("DATABRICKS_TOKEN is not configured. Please set it in the configuration section or environment variables.")
+
+        if not host:
+            raise ValueError("DATABRICKS_HOST is not configured. Please set it in the configuration section or environment variables.")
+
+        # Set environment variables
+        os.environ['DATABRICKS_TOKEN'] = token
+        os.environ['DATABRICKS_HOST'] = host
+
+        print(f"Connecting to Databricks at: {host}")
+        return WorkspaceClient(host=host, token=token)
 
 def execute_query(client, query, warehouse_id=None):
     """
     Execute a SQL query using Databricks SQL
-    
+
     Args:
         client: WorkspaceClient instance
         query: SQL query string to execute
         warehouse_id: Optional warehouse ID. If not provided, will use default
-    
+
     Returns:
         Query results as a list of dictionaries
     """
@@ -44,11 +91,11 @@ def execute_query(client, query, warehouse_id=None):
             warehouses = list(client.warehouses.list())
             if not warehouses:
                 raise ValueError("No SQL warehouses found")
-            
+
             # Filter for running serverless warehouses first
-            running_serverless = [w for w in warehouses 
+            running_serverless = [w for w in warehouses
                                 if w.state == "RUNNING" and w.warehouse_type == "SERVERLESS"]
-            
+
             if running_serverless:
                 warehouse = running_serverless[0]
                 warehouse_id = warehouse.id
@@ -72,31 +119,31 @@ def execute_query(client, query, warehouse_id=None):
                 print(f"Using specified warehouse: {warehouse.name} ({warehouse_id}) - State: {warehouse.state}")
             except Exception:
                 print(f"Using specified warehouse ID: {warehouse_id} (unable to get warehouse details)")
-        
+
         # Create and execute the statement
         print(f"Executing query: {query.strip()}")
-        
+
         statement = client.statement_execution.execute_statement(
             warehouse_id=warehouse_id,
             statement=query,
             wait_timeout="30s"
         )
-        
+
         # Wait for completion
         while str(statement.status.state) in ["StatementState.PENDING", "StatementState.RUNNING"]:
             print("Query running...")
             time.sleep(1)
             statement = client.statement_execution.get_statement(statement.statement_id)
-        
+
         if str(statement.status.state) == "StatementState.SUCCEEDED":
             print("Query completed successfully!")
-            
+
             # Get results
             result = client.statement_execution.get_statement_result_chunk_n(
                 statement_id=statement.statement_id,
                 chunk_index=0
             )
-            
+
             # Parse results into list of dictionaries
             if result.data_array:
                 columns = [col.name for col in statement.manifest.schema.columns]
@@ -106,13 +153,13 @@ def execute_query(client, query, warehouse_id=None):
                     for i, value in enumerate(row):
                         row_dict[columns[i]] = value
                     rows.append(row_dict)
-                
+
                 print(f"Retrieved {len(rows)} rows")
                 return rows
             else:
                 print("Query returned no results")
                 return []
-                
+
         else:
             error_msg = f"Query failed with state: {statement.status.state}"
             if statement.status.error:
@@ -120,7 +167,7 @@ def execute_query(client, query, warehouse_id=None):
             print(f"Debug: State check failed. State is: {statement.status.state} (type: {type(statement.status.state)})")
             print(f"Debug: String representation: '{str(statement.status.state)}'")
             raise Exception(error_msg)
-            
+
     except Exception as e:
         print(f"Error executing query: {e}")
         raise
@@ -129,12 +176,12 @@ def main():
     """Main function"""
     try:
         print("Starting Databricks connection...")
-        client = get_logfood_client()
-        print("Databricks LOGFOOD client initialized successfully!")
-        
+        client = get_databricks_client()
+        print("Databricks client initialized successfully!")
+
         # Execute the user query
         results = execute_query(client, USER_QUERY, SQL_WAREHOUSE_ID)
-        
+
         # Display results
         if results:
             print("\nQuery Results:")
@@ -143,7 +190,7 @@ def main():
                 print(f"Row {i}: {row}")
         else:
             print("No results returned")
-            
+
     except Exception as e:
         print(f"Error: {e}")
 
