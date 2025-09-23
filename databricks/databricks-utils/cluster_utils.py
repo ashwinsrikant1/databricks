@@ -1,4 +1,54 @@
 #!/usr/bin/env python3
+"""
+Databricks Cluster Utilities
+
+This script provides comprehensive cluster management functionality for Databricks workspaces.
+It consolidates cluster operations into a single, configurable utility with both programmatic
+and command-line interfaces.
+
+Features:
+---------
+- List all clusters in the workspace
+- Get detailed information about specific clusters
+- Launch new clusters with customizable configurations
+- Get existing clusters or create new ones if not found
+- Execute SQL queries on All Purpose clusters
+- Modify cluster configurations (workers, node types, Spark config, etc.)
+
+Authentication:
+--------------
+- Supports both local PAT token authentication and Databricks notebook default auth
+- Automatically detects environment and uses appropriate authentication method
+- Configurable workspace URL and token at the top of the file
+
+Command Line Usage:
+------------------
+python cluster_utils.py list                          # List all clusters
+python cluster_utils.py info <cluster_id>             # Get cluster information
+python cluster_utils.py launch [cluster_name]         # Launch a new cluster
+python cluster_utils.py get-or-create [cluster_name]  # Get existing or create new cluster
+python cluster_utils.py execute <cluster_id> <query>  # Execute SQL query on cluster
+python cluster_utils.py modify <cluster_id> <options> # Modify cluster configuration
+
+Programmatic Usage:
+------------------
+from cluster_utils import get_databricks_client, list_clusters, launch_cluster
+
+client = get_databricks_client()
+clusters = list_clusters(client)
+cluster = launch_cluster(client, custom_config)
+
+Configuration:
+-------------
+Modify the DATABRICKS_HOST and DATABRICKS_TOKEN variables at the top of this file,
+or set them via environment variables. The DEFAULT_CLUSTER_CONFIG can also be
+customized for your preferred cluster specifications.
+
+Dependencies:
+------------
+- databricks-sdk
+- Standard Python libraries (os, time, sys, pathlib)
+"""
 
 import os
 import time
