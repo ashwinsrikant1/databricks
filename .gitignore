@@ -101,3 +101,6 @@ Thumbs.db
 
 # Nested git repositories (external projects)
 databricks/databricks-utils/ai/databricks-mcp-server/
+
+# Customer-specific projects (separate repository)
+cx_projects/

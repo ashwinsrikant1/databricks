@@ -21,12 +21,11 @@ pip install -r requirements.txt
 ## Repository Structure
 
 ```
-databricks_testing/
+databricks/
 ├── databricks/              # Core Databricks utilities and tools
 │   ├── databricks-app/      # Databricks applications
 │   ├── databricks-utils/    # General utilities and helpers
 │   └── databricks-go/       # Go-based tools
-├── cx_projects/             # Customer-specific implementations (submodule)
 ├── mcp/                     # Databricks MCP SDK (submodule)
 ├── examples/                # Example scripts and notebooks
 │   ├── etl/                 # ETL pipeline examples
@@ -35,6 +34,8 @@ databricks_testing/
 ├── requirements.txt         # Core Python dependencies
 └── setup.sh                 # Quick setup script
 ```
+
+> **Note**: Customer-specific code should be maintained in a separate repository (e.g., `cx_projects`). This repository contains only public, general-purpose utilities.
 
 ## Configuration
 
@@ -84,15 +85,6 @@ Ready-to-use example code:
 - **ETL Examples**: SCD Type 2 pipelines, CDC processing
 - **Notebooks**: Data generation, analysis examples
 
-### Customer Projects (`cx_projects/`)
-
-Customer-specific implementations (private submodule).
-
-To initialize:
-```bash
-git submodule update --init --recursive
-```
-
 ## Development
 
 ### Running Tests
@@ -114,13 +106,11 @@ pip install -r requirements.txt
 
 ## Submodules
 
-This repository uses git submodules:
-- `cx_projects`: Customer-specific code (private)
-- `mcp`: Databricks MCP SDK
+This repository uses the `mcp` submodule for the Databricks MCP SDK.
 
-To update submodules:
+To update the submodule:
 ```bash
-git submodule update --remote
+git submodule update --remote mcp
 ```
 
 ## Contributing

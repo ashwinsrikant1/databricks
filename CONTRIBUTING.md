@@ -12,7 +12,7 @@ Thank you for your interest in contributing to the Databricks Utilities reposito
    cd databricks
    ```
 
-2. **Initialize submodules** (if you need access to customer projects or MCP SDK)
+2. **Initialize submodules** (if you need the MCP SDK)
    ```bash
    git submodule update --init --recursive
    ```
@@ -63,16 +63,16 @@ Thank you for your interest in contributing to the Databricks Utilities reposito
 - **Applications**: Add to `databricks/databricks-app/`
 - **Examples**: Add to `examples/etl/` or `examples/notebooks/`
 - **Documentation**: Add to `docs/`
-- **Customer-specific**: Add to `cx_projects/` (private submodule)
+
+> **Note**: Customer-specific code should be maintained in a separate private repository, not in this public utilities repository.
 
 ### File Organization
 
 ```
-databricks_testing/
+databricks/
 ├── databricks/           # Core utilities and tools
 ├── examples/             # Self-contained examples
 ├── docs/                 # Documentation
-├── cx_projects/          # Customer-specific (submodule)
 └── mcp/                  # MCP SDK (submodule)
 ```
 
@@ -162,17 +162,17 @@ Add SCD Type 2 pipeline example
 
 ### Working with Submodules
 
-When changes involve submodules:
+When updating the MCP submodule:
 
 ```bash
 # Update submodule
-cd cx_projects
+cd mcp
 git pull origin main
 cd ..
 
 # Commit the submodule update
-git add cx_projects
-git commit -m "Update cx_projects submodule"
+git add mcp
+git commit -m "Update mcp submodule"
 ```
 
 ## Best Practices
