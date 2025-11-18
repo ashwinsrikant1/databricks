@@ -1,0 +1,27 @@
+# Databricks Testing Repository - Core Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core Databricks SDK - used across most projects
+databricks-sdk>=0.18.0
+
+# Database connectivity
+databricks-sql-connector[pyarrow]>=3.0.0
+
+# Python utilities
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# Testing frameworks
+pytest>=7.0.0
+pytest-mock>=3.10.0
+pytest-asyncio>=0.21.0
+
+# Note: Additional project-specific dependencies are in:
+# - cx_projects/anthropic/requirements.txt (MCP server specific)
+# - cx_projects/epl/genie_integration/requirements.txt (Genie integration)
+# - cx_projects/meta/mcp_genie/requirements.txt (MCP Genie agent)
+# - databricks-mcp-server/pyproject.toml (MCP server implementation)
+# - mcp/pyproject.toml (MCP SDK)
+
+# For MCP-related work, see databricks-mcp-server/pyproject.toml
+# For web apps, see individual project requirements.txt files
